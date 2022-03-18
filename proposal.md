@@ -50,7 +50,7 @@ The following are some ideas we have for algorithms to implement, but may modify
 2. *Greedy Min Max*: minimize remaining possible word guesses with every guess
 3. 
 
-# Sources
+# Possible Sources
 https://arxiv.org/abs/2202.00557
 
 https://towardsdatascience.com/automatic-wordle-solving-a305954b746e
