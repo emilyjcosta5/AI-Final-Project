@@ -24,12 +24,19 @@ As previously mentioned in the introduction, rules #1 and #2 may be modified dur
 
 `C(n,r)=n!/(r!(n-r)!)`
 
-Next, we will need to set up a method for inputing a guess then outputting the result. The result would need to include the green, yellow, and grey square or, at the end, whether the user won the game. 
+Next, we will need to set up a method for inputing a guess then outputting the result. The input would be the guess provided by the algorithm (or, if the algorithm is known to the object, the method would calculate a guess itself). Then, the method would need to check if the guess is valid based on our criteria. Finally, the result of the guess accuracy would be given. The result would need to include the green, yellow, and grey square or, at the end, whether the user won the game. 
+
+One idea for the game strucutre is for us to implement a method that effectively restarts the game so that the different algorithms can play the same exact game for us to better measure the performance of the implemented algorithms. The only thing that would not be reset is the word that is the answer of the particular game which includes the aspect of two of the initial inputs, the length of the word and alphabet.
+
+Finally, we discuss how the framework will interact with the algorithm. Basically, we implement a `Algorithm` class that serves as a Parent class for our algorithm implementations. The specifics of this will be further outlined in the Algorithms section later in our proposal. Our main idea on this is to structure it similar to other code we previously dealt with in this class. The Game object will take input as the next guess while the Algorithm object will make decisions of the guess based on feedback from the Game object. 
 
 # GUI
-
 In this section, we discuss how we will implement the Graphical User Interface (GUI) for our selected game based off of Wordle. Within our code, this was key in setting up the framework in which we implement our selected algorithms.  
 
+We will also implement a way for a human to interact with the game (or, at least, a human-like decision algorithm) in order to serve as a baseline for the performance of our algorithms.
+
 # Algorithms
+For the most significant portion of our project, we will implement a Parent class, `Algorithm`, that will serve as the Parent class for all the algorithms that we will implement. Each specific algorithm implemented will make guesses based on their criteria then the guess will be used as input for the game.
+
 
 1. *Genetic Algorithm*
