@@ -44,7 +44,7 @@ We will also implement a way for a human to interact with the game (or, at least
 # Algorithms
 For the most significant portion of our project, we will implement a Parent class, `Algorithm`, that will serve as the Parent class for all the algorithms that we will implement. Within our code, this was key in setting up the framework in which we implement our selected algorithms. Each specific algorithm implemented will make guesses based on their criteria then the guess will be used as input for the game. The main method necessary in all the algorithms will be one that outputs a guess given acquired knowledge from the feedback of the Game (think green, yellow, and grey squares). To make this simpler, the algorithm will always be given an initial hint from the Game in the form of feedback from a randomly guess word.
 
-The following are some ideas we have for algorithms to implement:
+The following are some ideas we have for algorithms to implement, but may modify this list as we discover other algorithms throughout this class:
 
 1. *Genetic Algorithm*: 
 2. *Greedy Min Max*: minimize remaining possible word guesses with every guess
