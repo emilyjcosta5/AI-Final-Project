@@ -1,4 +1,6 @@
 # Final Project Proposal
+### Emily Costa, Nilay Barde, Priyank Shelat, Pranav Bansal
+
 
 ## Introduction
 
@@ -24,9 +26,9 @@ We will create a class for an instance of the "game". We initiate this class wit
 
 First, we need to generate the "word of the day" which, in the real game of Wordle, is a selected word which people must deduce that day. This is something that can be set automatically when a new instance of a `Game` is created. We simply create a method, `set_word`, that generates a random word. It may be interesting to give more weight, or likelihood, to some letters as we humans typically do use certain letters more than others. This may be explored during our project.
 
-As previously mentioned in the introduction, rules #1 and #2 may be modified during our project to allow for more experimentation. When breaking rule #2 and creating our own words we can count the total possibilities of words, our search space, using a combination. The size of the alphabet used to create the word is the total number of objects in the set, commonly regarded as `n`. If we use the full English alphabet `n` would be 26 and if we use the letters a-d inclusively then `n` would be 4. The number of letters in the word is the number of choosing objects from the set, or `r`. For a 5-letter word `r` would be 5. Therefore, we use the following combination formula to calculate the number of possible words and measure the performance of the algorithm:
+As previously mentioned in the introduction, rules #1 and #2 may be modified during our project to allow for more experimentation. When breaking rule #2 and creating our own words we can count the total possibilities of words, our search space, using a combination. The size of the alphabet used to create the word is the total number of objects in the set, commonly regarded as `n`. If we use the full English alphabet `n` would be 26 and if we use the letters a-d inclusively then `n` would be 4. The number of letters in the word is the number of choosing objects from the set, or `r`. For a 5-letter word `r` would be 5. Therefore, we use the following permutation formula to calculate the number of possible words and measure the performance of the algorithm:
 
-`C(n,r)=n!/(r!(n-r)!)`
+`P(n,r)=n!/(n-r)!`
 
 Again, we may opt for a word list which means that the approach of generating a word will vary from a randomly generated word.
 
