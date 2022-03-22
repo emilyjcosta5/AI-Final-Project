@@ -1,4 +1,3 @@
-from multiprocessing.sharedctypes import Value
 import requests
 import random
 
@@ -9,8 +8,17 @@ class Game:
 
         Parameters
         ----------
+        word_length: int, optional 
+            Length of word to guess
+        word_source: str, optional
+            Where to get the input of the words
+        word_list: list, optional
+            If word_source is 'manual', then this is the list of allowed word guesses
+        number_guesses: int, optional
+            Max number of times a word can be guessed
 
         Returns
+        None
         -------
         """
         # check parameters are correct
@@ -36,9 +44,93 @@ class Game:
         self.answer = random.choice(self.word_list)
         self.turn_number = 0
         self.number_guesses = number_guesses
+        self.guesses = []
+        self.WIN = 1
+        self.LOSE = -1
+        self.game_status = 0
+        self.word_length = word_length
+
+    def get_guesses(self):
+        '''
+        Gives previous guesses and the square color of each letter, 
+        which indicates the correctness of the guess.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        guesses: tuple
+            The guesses structured as (guess, colors of letter blocks)
+        '''
+        squares = []
+        for guess in self.guesses:
+            square = []
+            for i, letter in enumerate(guess):
+                if letter==self.answer[i]:
+                    square.append("GREEN")
+                elif letter in self.answer:
+                    square.append("YELLOW")
+                else:
+                    square.append("GREY")
+            squares.append(square)
+        guesses = zip(self.guesses,squares)
+        return guesses
+
+    def get_last_guess(self):
+        '''
+        Get most recent word guess
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        last_guess: str
+            Last word guesses
+        last_squares: list
+            The color of the square of the last guess
+        '''
+        guesses = self.get_guesses()
+        if not guesses:
+            return []
+        last_guess, last_squares = guesses[-1]
+        return last_guess, last_squares
 
     def restart(self):
-        pass
+        '''
+        Restarts game to default
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        '''
+        self.turn_number = 0
+        self.guesses = []
+        self.game_status = 0
+
+    def guess(self, guess):
+        if not len(guess)==self.word_length:
+            print('Must guess a word of length %d'%self.word_length)
+            return self.game_status
+        if not self.turn_number<self.number_guesses:
+            print('No more guesses left! Please restart game.')
+            self.game_status = self.LOSE
+            return self.game_status
+        if guess==self.answer:
+            self.game_status = self.WIN
+            return self.game_status
+        self.guesses.append(guess)
+        self.turn_number += 1
+        return self.game_status
+
 
 if __name__=="__main__":
     game = Game(word_source="web_simple")
+    
