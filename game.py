@@ -75,7 +75,7 @@ class Game:
                 else:
                     square.append("GREY")
             squares.append(square)
-        guesses = zip(self.guesses,squares)
+        guesses = [list(x) for x in zip(self.guesses,squares)]
         return guesses
 
     def get_last_guess(self):
@@ -95,9 +95,12 @@ class Game:
         '''
         guesses = self.get_guesses()
         if not guesses:
-            return []
+            return ["",[]]
         last_guess, last_squares = guesses[-1]
         return last_guess, last_squares
+
+    def get_game_status(self):
+        return self.game_status
 
     def restart(self):
         '''
@@ -116,21 +119,61 @@ class Game:
         self.game_status = 0
 
     def guess(self, guess):
+        '''
+        Guess the answer for the game
+
+        Parameters
+        ----------
+        guess: string
+            The guess of the word; must be same length
+            and in the word list
+
+        Returns
+        -------
+        game_status: int
+            0 if in progress, -1 for lose, 1 for win
+        '''
+        if not guess in self.word_list:
+            print('Word in not valid. Must be in the word list.')
+            return self.game_status
         if not len(guess)==self.word_length:
             print('Must guess a word of length %d'%self.word_length)
+            return self.game_status
+        self.guesses.append(guess)
+        self.turn_number += 1
+        if guess==self.answer:
+            self.game_status = self.WIN
             return self.game_status
         if not self.turn_number<self.number_guesses:
             print('No more guesses left! Please restart game.')
             self.game_status = self.LOSE
             return self.game_status
-        if guess==self.answer:
-            self.game_status = self.WIN
-            return self.game_status
-        self.guesses.append(guess)
-        self.turn_number += 1
         return self.game_status
 
 
 if __name__=="__main__":
     game = Game(word_source="web_simple")
-    
+    game_status = game.get_game_status()
+    while game_status==0:
+        guess = input("Enter guess: ")
+        game.guess(guess)
+        guess, squares = game.get_last_guess()
+        game_status = game.get_game_status()
+        if game_status==0:
+            print(squares)
+        elif game_status==1:
+            try_again = input("You won! Play another game? (Y/N)")
+            if try_again=='Y':
+                game = Game(word_source="web_simple")
+                game_status = game.get_game_status()
+            else:
+                print("OK. Bye-bye!")
+                break
+        elif game_status==-1:
+            try_again = input("You lose. Try again? (Y/N)")
+            if try_again=='Y':
+                game.restart()
+                game_status = game.get_game_status()
+            else:
+                print("OK. Bye-bye!")
+                break
