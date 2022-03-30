@@ -1,5 +1,3 @@
-import enum
-from lib2to3.pytree import Base
 from game import WordleGame
 import random
 
