@@ -15,7 +15,6 @@ class BaseAlgorithm:
         self.bad_letters = []
         self.good_letters = []
         self.right_position = {}
-        #self.word_tree = self.create_tree()
 
     def reset(self):
         self.guesses = []
@@ -33,6 +32,7 @@ class BaseAlgorithm:
         it may look something like https://www.poirrier.ca/notes/wordle/ except more simple. 
         recursion might be useful for this.
         '''
+        # TO-DO
         pass
     
     def make_guess(self) -> str:
@@ -77,6 +77,10 @@ class GreedyDepthAlgorithm(BaseAlgorithm):
     def __init__(self, word_list, Verbose=False) -> None:
         super().__init__(word_list, Verbose)
 
+    def make_guess(self) -> str:
+        # TO-DO
+        return super().make_guess()
+
 class GreedyBreadthAlgorithm(BaseAlgorithm):
     '''
     Similar to GreedyDepthAlgorithm but searches the word tree using breadth
@@ -86,6 +90,10 @@ class GreedyBreadthAlgorithm(BaseAlgorithm):
     '''
     def __init__(self, word_list, Verbose=False) -> None:
         super().__init__(word_list, Verbose)
+    
+    def make_guess(self) -> str:
+        # TO-DO
+        return super().make_guess()
 
 if __name__=="__main__":
     # manual tests on algorithms
