@@ -47,22 +47,26 @@ class HumanAlgorithm(BaseAlgorithm):
     def make_guess(self, previous_guess=None) -> str:
         if previous_guess==None:
             guess = random.choice(self.word_list)
+            self.guesses.append(guess)
             return guess
         p_guess, squares = previous_guess
         for idx, square in enumerate(squares):
             if square=="GREY":
                 self.bad_letters.append(p_guess[idx])
-            elif square=="YELLOW" or square=="GREEN":
+            if square=="YELLOW" or square=="GREEN":
                 self.good_letters.append(p_guess[idx])
-            else:
-                self.right_position[idx]==p_guess[idx]
+            if square=="GREEN":
+                self.right_position[idx] = p_guess[idx]
         possible_words = [word for word in self.word_list if \
                             all(good_letter in word for good_letter in self.good_letters) \
                             and \
                             all(bad_letter not in word for bad_letter in self.bad_letters) \
                             and \
-                            all(word[i]==self.right_position[i] for i in self.right_position.keys())]
+                            all(word[i]==self.right_position[i] for i in self.right_position.keys()) \
+                            and \
+                            word not in self.guesses]
         guess = random.choice(possible_words)
+        self.guesses.append(guess)
         return guess
 
 class GreedyDepthAlgorithm(BaseAlgorithm):
@@ -110,6 +114,8 @@ if __name__=="__main__":
             guess, squares = game.get_last_guess()
             print('%s: %s'%(guess, ' '.join(squares)))
         elif game_status==1:
+            guess, squares = game.get_last_guess()
+            print('%s: %s'%(guess, ' '.join(squares)))
             try_again = input("You won! Play another game? (Y/N) ")
             if try_again=='Y':
                 game = WordleGame()
@@ -119,6 +125,8 @@ if __name__=="__main__":
                 print("OK. Bye-bye!")
                 break
         elif game_status==-1:
+            guess, squares = game.get_last_guess()
+            print('%s: %s'%(guess, ' '.join(squares)))
             try_again = input("You lose. Try again? (Y/N) ")
             if try_again=='Y':
                 game.restart()

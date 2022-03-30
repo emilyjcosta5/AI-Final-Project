@@ -167,7 +167,6 @@ class WordleGame:
             self.game_status = self.WIN
             return self.game_status
         if not self.turn_number<self.number_guesses:
-            print('No more guesses left! Please restart game.')
             self.game_status = self.LOSE
             return self.game_status
         return self.game_status
