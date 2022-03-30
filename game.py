@@ -114,7 +114,7 @@ class WordleGame:
         '''
         guesses = self.get_guesses()
         if not guesses:
-            return ["",[]]
+            return None
         last_guess, last_squares = guesses[-1]
         return last_guess, last_squares
 
@@ -188,9 +188,9 @@ if __name__=="__main__":
     while game_status==0:
         guess = input("Enter guess: ")
         game.guess(guess)
-        guess, squares = game.get_last_guess()
         game_status = game.get_game_status()
-        if game_status==0:
+        if game_status==0 and game.get_last_guess():
+            guess, squares = game.get_last_guess()
             print('%s: %s'%(guess, ' '.join(squares)))
         elif game_status==1:
             try_again = input("You won! Play another game? (Y/N) ")
