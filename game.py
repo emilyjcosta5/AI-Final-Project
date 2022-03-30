@@ -121,6 +121,9 @@ class WordleGame:
     def get_game_status(self):
         return self.game_status
 
+    def get_word_list(self):
+        return self.word_list
+
     def restart(self):
         '''
         Restarts game to default
