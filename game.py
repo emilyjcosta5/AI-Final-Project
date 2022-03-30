@@ -1,6 +1,7 @@
 import requests
 import random
 
+
 class WordleGame:
     def __init__(self, word_length=5, word_source="default", word_list=None, number_guesses=6):
         """
@@ -38,27 +39,29 @@ class WordleGame:
         """
         # check parameters are correct
         if word_source not in ["default", "web_simple", "manual"]:
-            raise ValueError("word_list parameter is 'default', 'word_simple' or 'manual'.")
+            raise ValueError(
+                "word_list parameter is 'default', 'word_simple' or 'manual'.")
         if not isinstance(word_length, int):
-            raise ValueError("word_length must be an int.") 
+            raise ValueError("word_length must be an int.")
         if not isinstance(number_guesses, int):
-            raise ValueError("number_guesses must be an int.") 
+            raise ValueError("number_guesses must be an int.")
         # set up variables
-        if word_source=='default':
+        if word_source == 'default':
             words = open('word_lists/default_words.txt', 'r')
             word_list = [word for word in words.read().splitlines()]
             words.close()
-        elif word_source=="manual":
-            if word_list==None:
+        elif word_source == "manual":
+            if word_list == None:
                 raise ValueError("word_list must be provided.")
             if not type(word_list) is list and not type(word_list) is tuple:
                 raise ValueError("word_list must be in list or tuple form.")
             if not all([isinstance(word, str) for word in word_list]):
-                raise ValueError("all words in word_list must be strings.")  
-        elif word_source=="web_simple":
+                raise ValueError("all words in word_list must be strings.")
+        elif word_source == "web_simple":
             url = "https://www.mit.edu/~ecprice/wordlist.10000"
             r = requests.get(url, stream=True)
-            word_list = [word for word in r.text.split("\n") if len(word)==word_length]
+            word_list = [word for word in r.text.split(
+                "\n") if len(word) == word_length]
         self.word_list = word_list
         self.answer = random.choice(self.word_list)
         self.turn_number = 0
@@ -87,14 +90,14 @@ class WordleGame:
         for guess in self.guesses:
             square = []
             for i, letter in enumerate(guess):
-                if letter==self.answer[i]:
+                if letter == self.answer[i]:
                     square.append("GREEN")
                 elif letter in self.answer:
                     square.append("YELLOW")
                 else:
                     square.append("GREY")
             squares.append(square)
-        guesses = [list(x) for x in zip(self.guesses,squares)]
+        guesses = [list(x) for x in zip(self.guesses, squares)]
         return guesses
 
     def get_last_guess(self):
@@ -158,22 +161,23 @@ class WordleGame:
         if not guess in self.word_list:
             print('Word in not valid. Must be in the word list.')
             return self.game_status
-        if not len(guess)==self.word_length:
-            print('Must guess a word of length %d'%self.word_length)
+        if not len(guess) == self.word_length:
+            print('Must guess a word of length %d' % self.word_length)
             return self.game_status
         self.guesses.append(guess)
         self.turn_number += 1
-        if guess==self.answer:
+        if guess == self.answer:
             self.game_status = self.WIN
             return self.game_status
-        if not self.turn_number<self.number_guesses:
-            print('No more guesses left! Please restart game.')
+        if not self.turn_number < self.number_guesses:
+            print('No more guesses left! The word was ' +
+                  str(self.answer) + '! Please restart game.')
             self.game_status = self.LOSE
             return self.game_status
         return self.game_status
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     # test manual word list input
     '''
     words = open('word_lists/default_words.txt', 'r')
@@ -188,24 +192,24 @@ if __name__=="__main__":
     # test with default word list
     game = WordleGame()
     game_status = game.get_game_status()
-    while game_status==0:
+    while game_status == 0:
         guess = input("Enter guess: ")
         game.guess(guess)
         game_status = game.get_game_status()
-        if game_status==0 and game.get_last_guess():
+        if game_status == 0 and game.get_last_guess():
             guess, squares = game.get_last_guess()
-            print('%s: %s'%(guess, ' '.join(squares)))
-        elif game_status==1:
+            print('%s: %s' % (guess, ' '.join(squares)))
+        elif game_status == 1:
             try_again = input("You won! Play another game? (Y/N) ")
-            if try_again=='Y':
+            if try_again == 'Y':
                 game = WordleGame(word_source="web_simple")
                 game_status = game.get_game_status()
             else:
                 print("OK. Bye-bye!")
                 break
-        elif game_status==-1:
+        elif game_status == -1:
             try_again = input("You lose. Try again? (Y/N) ")
-            if try_again=='Y':
+            if try_again == 'Y':
                 game.restart()
                 game_status = game.get_game_status()
             else:
