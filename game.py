@@ -159,11 +159,9 @@ class WordleGame:
             0 if in progress, -1 for lose, 1 for win
         '''
         if not guess in self.word_list:
-            print('Word in not valid. Must be in the word list.')
-            return self.game_status
+            raise ValueError('Word in not valid. Must be in the word list.')
         if not len(guess) == self.word_length:
-            print('Must guess a word of length %d' % self.word_length)
-            return self.game_status
+            raise ValueError('Must guess a word of length %d' % self.word_length)
         self.guesses.append(guess)
         self.turn_number += 1
         if guess == self.answer:
@@ -202,7 +200,7 @@ if __name__ == "__main__":
             print('%s: %s'%(guess, ' '.join(squares)))
             try_again = input("You won! Play another game? (Y/N) ")
             if try_again == 'Y':
-                game = WordleGame(word_source="web_simple")
+                game = WordleGame()
                 game_status = game.get_game_status()
             else:
                 print("OK. Bye-bye!")
