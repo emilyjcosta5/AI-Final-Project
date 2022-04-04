@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import enum
 from tkinter import *
 from tkinter import messagebox
@@ -33,6 +34,7 @@ def playGame():
                        column=i, padx=20, pady=20)
             label.config(bg=squares[i], fg=BLACK, padx=20, pady=20)
         wordInput.delete(0, END)
+        root.update()
         if game_status == 1:
             MsgBox=messagebox.askquestion('Again', 'Do you want to play again?')
             if MsgBox == 'yes':
@@ -48,7 +50,7 @@ def playGame():
                 python = sys.executable
                 os.execl(python, python, * sys.argv)
             else:
-                messagebox.showinfo('Exit','OK. Bye-bye!')
+                messagebox.showinfo('Exit', 'OK. Bye-bye!')
                 root.destroy()
 
 wordGuessButton = Button(root, text="Guess", command=playGame)
