@@ -36,7 +36,7 @@ def playGame():
         wordInput.delete(0, END)
         root.update()
         if game_status == 1:
-            MsgBox=messagebox.askquestion('Again', 'Do you want to play again?')
+            MsgBox=messagebox.askquestion('Again', 'You won! Do you want to play again?')
             if MsgBox == 'yes':
                 python = sys.executable
                 os.execl(python, python, * sys.argv)
@@ -45,7 +45,7 @@ def playGame():
                 root.destroy()
 
         elif game_status == -1:
-            MsgBox=messagebox.askquestion('Again', 'Do you want to play again?')
+            MsgBox=messagebox.askquestion('Again', 'You lost! Do you want to play again?')
             if MsgBox == 'yes':
                 python = sys.executable
                 os.execl(python, python, * sys.argv)
