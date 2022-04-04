@@ -3,6 +3,8 @@ from tkinter import *
 from tkinter import messagebox
 import tkinter
 import game
+import sys
+import os
 
 root = tkinter.Tk()
 wordleGame = game.WordleGame()
@@ -13,7 +15,7 @@ BLACK = "#000000"
 GREY = "#808080"
 WHITE = "#FFFFFF"
 
-root.config(bg=BLACK)
+root.config(bg=WHITE)
 root.title("Wordle")
 wordInput = Entry(root)
 wordInput.grid(row=999, column=0, padx=10, pady=10, columnspan=3)
@@ -30,33 +32,27 @@ def playGame():
             label.grid(row=wordleGame.turn_number+1,
                        column=i, padx=20, pady=20)
             label.config(bg=squares[i], fg=BLACK, padx=20, pady=20)
-
+        wordInput.delete(0, END)
         if game_status == 1:
-            messagebox.showinfo(
-                "correct!", f"You won!")
-            # try_again = input("You won! Play another game? (Y/N) ")
-            # if try_again == 'Y':
-            #     print("Not right now")
-            #     break
-            # game = WordleGame(word_source="web_simple")
-            # game_status = game.get_game_status()
-            # else:
-            #     print("OK. Bye-bye!")
-            #     break
-        elif game_status == -1:
-            messagebox.showerror(
-                "you lose!", f"You Lose! The word was {wordleGame.answer}")
-            # if try_again == 'Y':
-            #     wordleGame.restart()
-            #     game_status = wordleGame.get_game_status()
-            # else:
-            #     print("OK. Bye-bye!")
-            #     break
+            MsgBox=messagebox.askquestion('Again', 'Do you want to play again?')
+            if MsgBox == 'yes':
+                python = sys.executable
+                os.execl(python, python, * sys.argv)
+            else:
+                messagebox.showinfo('Exit','OK. Bye-bye!')
+                root.destroy()
 
+        elif game_status == -1:
+            MsgBox=messagebox.askquestion('Again', 'Do you want to play again?')
+            if MsgBox == 'yes':
+                python = sys.executable
+                os.execl(python, python, * sys.argv)
+            else:
+                messagebox.showinfo('Exit','OK. Bye-bye!')
+                root.destroy()
 
 wordGuessButton = Button(root, text="Guess", command=playGame)
 wordGuessButton.grid(row=999, column=3, columnspan=3)
 root.bind('<Return>', lambda event: playGame())
-
 
 root.mainloop()
