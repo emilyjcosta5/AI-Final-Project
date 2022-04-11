@@ -205,7 +205,7 @@ if __name__ == "__main__":
             print('%s: %s'%(guess, ' '.join(squares)))
             try_again = input("You won! Play another game? (Y/N) ")
             if try_again == 'Y':
-                game = WordleGame(word_source="web_simple")
+                game = WordleGame()
                 game_status = game.get_game_status()
             else:
                 print("OK. Bye-bye!")
