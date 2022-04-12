@@ -159,7 +159,7 @@ class WordleGame:
             0 if in progress, -1 for lose, 1 for win
         '''
         if not guess in self.word_list:
-            raise ValueError('Word in not valid. Must be in the word list.')
+            raise ValueError('Word is not valid. Must be in the word list.')
         if not len(guess) == self.word_length:
             raise ValueError('Must guess a word of length %d' % self.word_length)
         self.guesses.append(guess)
