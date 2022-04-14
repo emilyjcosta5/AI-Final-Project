@@ -1,5 +1,6 @@
 import requests
 import random
+from tkinter import messagebox
 
 
 class WordleGame:
@@ -159,9 +160,17 @@ class WordleGame:
             0 if in progress, -1 for lose, 1 for win
         '''
         if not guess in self.word_list:
+<<<<<<< HEAD
             raise ValueError('Word is not valid. Must be in the word list.')
+=======
+            messagebox.showinfo(
+                "Error!", f'Word in not valid. Must be in the word list.')
+            return self.game_status
+>>>>>>> upstream/main
         if not len(guess) == self.word_length:
-            raise ValueError('Must guess a word of length %d' % self.word_length)
+            messagebox.showinfo(
+                "Error!", f'Must guess a word of length %d' % self.word_length)
+            return self.game_status
         self.guesses.append(guess)
         self.turn_number += 1
         if guess == self.answer:
