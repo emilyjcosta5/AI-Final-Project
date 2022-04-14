@@ -1,5 +1,7 @@
 from game import WordleGame
 import random
+import math
+from itertools import product
 
 class BaseAlgorithm:
     '''
@@ -35,6 +37,7 @@ class BaseAlgorithm:
     
     def make_guess(self) -> str:
         pass
+
 
 class HumanAlgorithm(BaseAlgorithm):
     '''
@@ -135,6 +138,88 @@ class NaiveFrequencyAlgorithm(BaseAlgorithm):
         
 
 
+class MaxEntropyAlgorithm(BaseAlgorithm):
+    '''
+    Information Theory based implementation
+    Guess the word by selecting the word with highest entropy from the available word list.
+    It basically means that we want to reduce the number of possible words matching the existing pattern.
+    The more small the space of possible words is after a guess, more will be the information gain.
+
+    Implementation inspired by - https://towardsdatascience.com/information-theory-applied-to-wordle-b63b34a6538e
+    Youtube(3 Blue 1 Brown) - https://youtu.be/v68zYyaEmEA
+    '''
+
+    def __init__(self, word_list) -> None:
+        super().__init__(word_list)
+        self.remaining_word_list = self.word_list
+
+    def calculate_entropy(self,word) -> float:
+        patterns = {}
+        for w in self.remaining_word_list:
+            p = ""
+            for i in range(len(w)):
+                if w[i]==word[i]:
+                    p+="g"
+                elif w[i] in word:
+                    p+="y"
+                elif w[i] not in word:
+                    p+="b"
+            if p in patterns:
+                patterns[p]+=1
+            else:
+                patterns[p]=1
+                
+        entropy = 0
+        for k,v in patterns.items():
+            if v!=0:
+                prob = v/len(self.remaining_word_list)
+                info = -1 * math.log(prob,2)
+                entropy+=prob*info
+                
+        return entropy
+    
+
+    def make_guess(self,previous_guess=None) -> str:
+        
+        if previous_guess==None:
+            guess = random.choice(self.word_list)
+            self.guesses.append(guess)
+            return guess
+        
+        
+        p_guess, squares = previous_guess
+        for idx, square in enumerate(squares):
+            if square=="GREY":
+                self.bad_letters.append(p_guess[idx])
+            if square=="YELLOW" or square=="GREEN":
+                self.good_letters.append(p_guess[idx])
+            if square=="GREEN":
+                self.right_position[idx] = p_guess[idx]
+
+        self.remaining_word_list = [word for word in self.word_list if \
+                            all(good_letter in word for good_letter in self.good_letters) \
+                            and \
+                            all(bad_letter not in word for bad_letter in self.bad_letters) \
+                            and \
+                            all(word[i]==self.right_position[i] for i in self.right_position.keys()) \
+                            and \
+                            word not in self.guesses]
+        
+        
+        max_entropy = 0
+        guess = random.choice(self.remaining_word_list)
+
+        for word in self.remaining_word_list:
+            entropy = self.calculate_entropy(word)
+            if(entropy>max_entropy):
+                max_entropy = entropy
+                guess = word
+            
+        
+        self.guesses.append(guess)
+        return guess
+
+    
     
 class GreedyDepthAlgorithm(BaseAlgorithm):
     '''
@@ -178,13 +263,19 @@ if __name__=="__main__":
     choice = 1
     print("Select an Algorithm:\
           \n1.Human Algorithm\
-          \n2.Aggregated Frequency")
+          \n2.Aggregated Frequency\
+          \n3.Entropy Maximization")
+    
     choice = int(input())
     if choice == 1:
         algo = HumanAlgorithm(word_list=game.get_word_list())
     elif choice == 2:
         algo = NaiveFrequencyAlgorithm(word_list=game.get_word_list())
+    elif choice == 3:
+        algo = MaxEntropyAlgorithm(word_list=game.get_word_list())
 
+
+    #print("ANSWER:",game.answer)
     game_status = game.get_game_status()
     while game_status==0:
         game.guess(algo.make_guess(game.get_last_guess()))
