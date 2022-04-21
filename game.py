@@ -164,6 +164,10 @@ class WordleGame:
                 "Error!", f'Must guess a word of length %d' % self.word_length)
             return self.game_status
         if not guess in self.word_list:
+            messagebox.showinfo(
+                "Error!", f'Word in not valid. Must be in the word list.')
+            return self.game_status
+        if not guess in self.word_list:
             # raise ValueError('Word is not valid. Must be in the word list.')
             messagebox.showinfo(
                 "Error!", f'Word in not valid. Must be in the word list.')
