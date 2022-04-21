@@ -8,15 +8,15 @@ class WordleGame:
         """
         Initiates the Game class
 
-        Notes: 
+        Notes:
             - We can create a word list with 3 methods
                 1. File source
                     Stored in the `word_lists` directory
-                    Current file sources are: 
+                    Current file sources are:
                     i. default_word.txt:  the words that real Wordle uses;
                         note that this source only has words 5 letters long
                 2. Web source
-                    This should be dealt with in here since the formats vary 
+                    This should be dealt with in here since the formats vary
                     Current web sources are:
                     i. web_simple: this is a list created by MIT; this is a
                         strong option when varying word_length
@@ -25,7 +25,7 @@ class WordleGame:
 
         Parameters
         ----------
-        word_length: int, optional 
+        word_length: int, optional
             Length of word to guess
         word_source: str, optional
             Where to get the input of the words
@@ -75,7 +75,7 @@ class WordleGame:
 
     def get_guesses(self):
         '''
-        Gives previous guesses and the square color of each letter, 
+        Gives previous guesses and the square color of each letter,
         which indicates the correctness of the guess.
 
         Parameters
@@ -159,13 +159,18 @@ class WordleGame:
         game_status: int
             0 if in progress, -1 for lose, 1 for win
         '''
+        if not len(guess) == self.word_length:
+            messagebox.showinfo(
+                "Error!", f'Must guess a word of length %d' % self.word_length)
+            return self.game_status
         if not guess in self.word_list:
             messagebox.showinfo(
                 "Error!", f'Word in not valid. Must be in the word list.')
             return self.game_status
-        if not len(guess) == self.word_length:
+        if not guess in self.word_list:
+            # raise ValueError('Word is not valid. Must be in the word list.')
             messagebox.showinfo(
-                "Error!", f'Must guess a word of length %d' % self.word_length)
+                "Error!", f'Word in not valid. Must be in the word list.')
             return self.game_status
         self.guesses.append(guess)
         self.turn_number += 1
