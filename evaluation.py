@@ -97,14 +97,14 @@ if __name__=="__main__":
     clear_output(wait=True)
     print('Testing complete!\n')
 
-    output_data = {'Name': [], 'Algo Name' : [], 'Average Win Rate' : [], 'Letter Accuracy' : [], 'Perfect Letter Accuracy' : [],
+    output_data = {'Algo Name' : [], 'Average Win Rate' : [], 'Letter Accuracy' : [], 'Perfect Letter Accuracy' : [],
         'Average Number of Guesses' : [], 'Average Number of Guesses to Win' : [], 'Average Run Time' : []}
 
     for i in range(len(metrics)):
         algo = list(metrics.keys())[i]
         algo_values = metrics[algo]
 
-        output_data['Name'].append(algo)
+        output_data['Algo Name'].append(algo)
         output_data['Average Win Rate'].append(algo_values['Wins']/trials)
         output_data['Letter Accuracy'].append(algo_values['Correct Letter Count'] / (trials * word_length))
         output_data['Perfect Letter Accuracy'].append(algo_values['Perfect Letter Count'] / (trials * word_length))
@@ -120,4 +120,4 @@ if __name__=="__main__":
         print('Average run time for {} was: '.format(algo), output_data['Average Run Time'][-1])
         print()
 
-    pd.DataFrame(output_data).to_csv('/outputs/')
+    pd.DataFrame(output_data).to_csv('outputs/full_evaluation_out.csv')
