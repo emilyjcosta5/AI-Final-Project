@@ -48,7 +48,7 @@ class WordleGame:
             raise ValueError("number_guesses must be an int.")
         # set up variables
         if word_source == 'default':
-            words = open('word_lists/default_words.txt', 'r')
+            words = open('word_lists/default_words_copy.txt', 'r')
             word_list = [word for word in words.read().splitlines()]
             words.close()
         elif word_source == "manual":

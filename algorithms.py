@@ -225,10 +225,8 @@ class MaxEntropyAlgorithm(BaseAlgorithm):
     
 class GreedyDepthAlgorithm(BaseAlgorithm):
     '''
-    Pick the words by finding the path to minimal depth which basically minimizes the pool
-    of possible words as the algorithm gets feedback.
-    
-    Implemenation is inspired by: https://towardsdatascience.com/automatic-wordle-solving-a305954b746e
+    Pick the words by choosing the words with the highest value based on a point system giving a green letter 2 points, yellow letter 1 point. and a gray letter 0 points.
+    The word that gives the highest point value on average after analyzing the word list will be chosen. 
     '''
     def __init__(self, word_list, Verbose=False) -> None:
         super().__init__(word_list, Verbose)
@@ -255,7 +253,7 @@ class GreedyDepthAlgorithm(BaseAlgorithm):
                 best_words[guess] = points
             count+=1
         
-        best_words = dict(sorted(best_words.items(), key=lambda item: item[1], reverse=True)).keys()
+        best_words = list(dict(sorted(best_words.items(), key=lambda item: item[1], reverse=True)).keys())
         return best_words
 
     def make_guess(self, previous_guess=None) -> str:
@@ -282,12 +280,14 @@ class GreedyDepthAlgorithm(BaseAlgorithm):
                             all(word[i]==self.right_position[i] for i in self.right_position.keys()) \
                             and \
                             word not in self.guesses]
+                
+        new_best = []
+        for key in self.best_words:
+            if key in remaining_words:
+                new_best.append(key)
         
-        for key in self.best_words.keys:
-            if key not in remaining_words:
-                self.best_words.pop(key)
-        
-        guess = self.best_words
+        self.best_words = new_best
+        guess = self.best_words[0]
         
         return guess
 
@@ -335,35 +335,33 @@ if __name__=="__main__":
 
     best_words = algo.best_words
 
-    print(best_words)
-
-    #print("ANSWER:",game.answer)
-    # game_status = game.get_game_status()
-    # while game_status==0:
-    #     game.guess(algo.make_guess(game.get_last_guess()))
-    #     game_status = game.get_game_status()
-    #     if game_status==0 and game.get_last_guess():
-    #         guess, squares = game.get_last_guess()
-    #         print('%s: %s'%(guess, ' '.join(squares)))
-    #     elif game_status==1:
-    #         guess, squares = game.get_last_guess()
-    #         print('%s: %s'%(guess, ' '.join(squares)))
-    #         try_again = input("You won! Play another game? (Y/N) ")
-    #         if try_again=='Y':
-    #             game = WordleGame()
-    #             algo.reset()
-    #             game_status = game.get_game_status()
-    #         else:
-    #             print("OK. Bye-bye!")
-    #             break
-    #     elif game_status==-1:
-    #         guess, squares = game.get_last_guess()
-    #         print('%s: %s'%(guess, ' '.join(squares)))
-    #         try_again = input("You lose. Try again? (Y/N) ")
-    #         if try_again=='Y':
-    #             game.restart()
-    #             algo.reset()
-    #             game_status = game.get_game_status()
-    #         else:
-    #             print("OK. Bye-bye!")
-    #             break
+    print("ANSWER:",game.answer)
+    game_status = game.get_game_status()
+    while game_status==0:
+        game.guess(algo.make_guess(game.get_last_guess()))
+        game_status = game.get_game_status()
+        if game_status==0 and game.get_last_guess():
+            guess, squares = game.get_last_guess()
+            print('%s: %s'%(guess, ' '.join(squares)))
+        elif game_status==1:
+            guess, squares = game.get_last_guess()
+            print('%s: %s'%(guess, ' '.join(squares)))
+            try_again = input("You won! Play another game? (Y/N) ")
+            if try_again=='Y':
+                game = WordleGame()
+                algo.reset()
+                game_status = game.get_game_status()
+            else:
+                print("OK. Bye-bye!")
+                break
+        elif game_status==-1:
+            guess, squares = game.get_last_guess()
+            print('%s: %s'%(guess, ' '.join(squares)))
+            try_again = input("You lose. Try again? (Y/N) ")
+            if try_again=='Y' or try_again=='y':
+                game.restart()
+                algo.reset()
+                game_status = game.get_game_status()
+            else:
+                print("OK. Bye-bye!")
+                break
