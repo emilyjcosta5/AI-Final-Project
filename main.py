@@ -51,7 +51,7 @@ def playGame():
                 root.destroy()
 
         elif game_status == -1:
-            MsgBox=messagebox.askquestion('Again', 'You lost! Do you want to play again?')
+            MsgBox=messagebox.askquestion('Again', 'You lost! The word was ' + wordleGame.answer + '. Do you want to play again?')
             if MsgBox == 'yes':
                 python = sys.executable
                 os.execl(python, python, * sys.argv)
