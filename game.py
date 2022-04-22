@@ -88,12 +88,14 @@ class WordleGame:
             The guesses structured as (guess, colors of letter blocks)
         '''
         squares = []
+        indices = lambda word, letter: set([i for i, x in enumerate(word) if x==letter])
         for guess in self.guesses:
+            grey_letters = [letter for letter in list(set(guess)) if all(l in indices(guess, letter) for l in indices(self.answer, letter))]
             square = []
             for i, letter in enumerate(guess):
                 if letter == self.answer[i]:
                     square.append("GREEN")
-                elif letter in self.answer:
+                elif letter in self.answer and letter not in grey_letters:
                     square.append("YELLOW")
                 else:
                     square.append("GREY")
@@ -198,6 +200,7 @@ if __name__ == "__main__":
     # test with default word list
     game = WordleGame()
     game_status = game.get_game_status()
+    print(game.answer)
     while game_status == 0:
         guess = input("Enter guess: ")
         game.guess(guess)
