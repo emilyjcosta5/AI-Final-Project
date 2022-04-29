@@ -18,7 +18,8 @@ if __name__=="__main__":
         \n1.Human Algorithm\
         \n2.Aggregated Frequency\
         \n3.Entropy Maximization\
-        \n4.Genetic Algorithm")
+        \n4.Genetic Algorithm\
+        \n5.Q-Learning")
     algos = str(input()).split()
     algos = [int(i) for i in algos]
 
@@ -60,6 +61,9 @@ if __name__=="__main__":
             elif alg == 4:
                 test_algo = GeneticAlgortihm(word_list=test_game.get_word_list())
                 test_algo_name = 'Genetic Algorithm'
+            elif alg == 5:
+                test_algo = QLearn(word_list=test_game.get_word_list())
+                test_algo_name = 'Q Learning'
 
             if test_algo_name not in metrics.keys():
                 metrics[test_algo_name] = {'Wins' : 0, 'Perfect Letter Count' : 0, 'Correct Letter Count' : 0,

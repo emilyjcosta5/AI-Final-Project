@@ -3,6 +3,9 @@ import random
 import math
 from itertools import product
 import string
+import pandas as pd
+from os.path import exists
+import copy
 
 class BaseAlgorithm:
     '''
@@ -196,6 +199,18 @@ class GeneticAlgortihm(BaseAlgorithm):
     '''
     Pick words by picking the first two guesses randomly. From here on out, loop - each word will be given a fitness,
     selecting the 2 fittest, randomly combining them, and mutating each letter with some small probabilty.
+
+    Important Notes/Assumptions:
+    - While selecting two words, there is a check_selections function which checks all ordered combinations of the
+      selections to ensure they can create at least one new word in the remaining_word_list. If not a random word is
+      chosen. This is primarily for speed and was chosen after some testing. Alternatively, we could:
+      [1] turn up the mutation threshhold in general and remove the check_selections or
+      [2] we could turn up the mutation threshold only if the no new words can be created i.e. check_selections is False, or
+      [3] let it not converge and return one of the previous picks.
+
+    - remaining_word_list is consitently used so this cannot be considered a pure genetic algorithm. It does
+      incorporate a process of elimination element to make it more competitive. The alternative approach would be
+      to use the full word_list everytime.
     '''
 
     def __init__(self, word_list) -> None:
@@ -232,7 +247,7 @@ class GeneticAlgortihm(BaseAlgorithm):
 
     def check_selections(self, word1, word2) -> bool:
         new_word = ''
-        
+
         for i in range(len(word1)):
             new_word == word1[:i] + word2[i:]
             if new_word != word1 and new_word != word2 and new_word in self.remaining_word_list:
@@ -311,6 +326,128 @@ class GeneticAlgortihm(BaseAlgorithm):
         self.guesses.append(guess)
         return guess
 
+class QLearn(BaseAlgorithm):
+    '''
+    Use Q-learning to decide optimal policy. Our state will be the previously guessed word. The reward for a
+    correct word will be 10 and -1 for incorrect word. Our actions will be picking which word to guess next.
+
+    Use the Q-learning update policy Q(s,a) <- Q(s,a) + alpha[R(s) + lambda*[max_a'_(Q(s',a')) - Q(s,a)]]
+
+    Learn a policy then quickly make guesses. Since a single policy with this idea of state would align with a single
+    answer word, the idea is to udpate the policy with multiple target words. This means the policy will not
+    converge, but our goal is to find the words that have the highest possible utility for the most answers. Most
+    of the RL agents we learned about rely on the problem being a MDP, this formulation is not and thus this could
+    end very badly.
+
+    Other approaches would be to have a policy for each answer word and narrow down the policy list with each guess
+    however, this is more efficiently done with a tree.
+
+    Another idea is to follow suit from https://andrewkho.github.io/wordle-solver/ and define the state as, for each
+    letter, to track whether it’s been attempted, and if it has, which spaces it’s still possible for (i.e. yes, maybe,
+    no for each of the 5 spots).
+
+    This is similar to other methods that find the expected values of letters. The difference is the agent will find
+    the values via *** reinforcement *** and it will be for words rather than letters.
+    '''
+    def __init__(self, word_list, Verbose=False) -> None:
+        super().__init__(word_list, Verbose)
+        self.policy_or_utilities = {}
+        self.counts = [0]*len(word_list)
+        file_exists = exists('q_policy.csv')
+        if not file_exists:
+            self.train_agent()
+        else:
+            self.policy_or_utilities = pd.read_csv('q_policy.csv')
+
+    def train_agent(self):
+        learning_rate = 0.1 # alpha
+        lamb = 0.1 # lambda
+
+        for i in range(2000):
+            game = WordleGame()
+            algo = HumanAlgorithm(word_list=game.get_word_list())
+
+            game_status = game.get_game_status()
+            game.guess(algo.make_guess(game.get_last_guess()))
+            self.counts[self.word_list.index(game.get_last_guess()[0])] += 1
+            while game_status==0:
+                # Pick action:
+                actions = algo.remaining_word_list
+                guess = None
+                for a in actions:
+                    if a not in self.policy_or_utilities.keys():
+                        guess = a
+                        break
+                if guess is None:
+                    count_perc = 1
+                    for a in actions:
+                        a_count_perc = self.counts[self.word_list.index(a)] / sum(self.counts)
+                        if count_perc - a_count_perc >= 0.05:
+                            guess = a
+                            count_perc = a_count_perc
+                if guess is None:
+                    max_q_val = -100000
+                    for a in actions:
+                        if self.policy_or_utilities[a] >= max_q_val:
+                            guess = a
+                            max_q_val = self.policy_or_utilities[a]
+
+                # Perform action
+                game.guess(guess)
+                self.counts[self.word_list.index(guess)] += 1
+                algo.update_information(game.get_last_guess())
+                algo.update_remaining_words()
+                game_status = game.get_game_status()
+
+                # Update Q-values
+                s = game.guesses[-2]
+                s_prime = game.guesses[-1]
+                reward = -1
+                if game_status == 1: reward = 10
+
+                actions = algo.remaining_word_list
+                max_q_val = -1000
+                for a in actions:
+                    if a in self.policy_or_utilities.keys():
+                        if self.policy_or_utilities[a] > max_q_val:
+                            max_q_val = self.policy_or_utilities[a]
+                if max_q_val == -1000:
+                    max_q_val = 0
+
+                q_val_s = 0
+                if s in self.policy_or_utilities.keys():
+                    q_val_s = self.policy_or_utilities[s]
+
+                self.policy_or_utilities[s] = q_val_s + learning_rate * (-1 + lamb*max_q_val - q_val_s)
+
+            if i % 200 == 0:
+                print(f"Percent Complete: {i / 2000 * 100}")
+                #print('Q-vals: ', self.policy_or_utilities.items
+
+        print('Tarining complete!\n')
+        self.policy_or_utilities = pd.DataFrame(data=self.policy_or_utilities, index=[0])
+        self.policy_or_utilities.to_csv('q_policy.csv')
+
+    def make_guess(self, previous_guess=None) -> str:
+        if previous_guess == None:
+            return super().make_first_guess()
+
+        super().update_information(previous_guess)
+        super().update_remaining_words()
+
+        min_q_val = -1000
+        guess = None
+        for a in self.remaining_word_list:
+            if a in self.policy_or_utilities.keys():
+                if self.policy_or_utilities[a][0] >= min_q_val:
+                    guess = a
+                    min_q_val = self.policy_or_utilities[a][0]
+
+        if guess is not None:
+            return guess
+        else:
+            return super().make_first_guess()
+
 class GreedyDepthAlgorithm(BaseAlgorithm):
     '''
     Pick the words by finding the path to minimal depth which basically minimizes the pool
@@ -359,7 +496,8 @@ if __name__=="__main__":
           \n1.Human Algorithm\
           \n2.Aggregated Frequency\
           \n3.Entropy Maximization\
-          \n4.Genetic Algorithm")
+          \n4.Genetic Algorithm\
+          \n5.Q-Learning")
 
     choice = int(input())
     if choice == 1:
@@ -370,6 +508,8 @@ if __name__=="__main__":
         algo = MaxEntropyAlgorithm(word_list=game.get_word_list())
     elif choice == 4:
         algo = GeneticAlgortihm(word_list=game.get_word_list())
+    elif choice == 5:
+        algo = QLearn(word_list=game.get_word_list())
 
 
     #print("ANSWER:",game.answer)
