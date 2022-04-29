@@ -1,5 +1,6 @@
 import requests
 import random
+import collections
 from tkinter import messagebox
 
 
@@ -88,15 +89,15 @@ class WordleGame:
             The guesses structured as (guess, colors of letter blocks)
         '''
         squares = []
-        indices = lambda word, letter: set([i for i, x in enumerate(word) if x==letter])
         for guess in self.guesses:
-            grey_letters = [letter for letter in list(set(guess)) if all(l in indices(guess, letter) for l in indices(self.answer, letter))]
             square = []
+            letter_counter = collections.Counter(s for s, g in zip(self.answer, guess) if s != g)
             for i, letter in enumerate(guess):
                 if letter == self.answer[i]:
                     square.append("GREEN")
-                elif letter in self.answer and letter not in grey_letters:
+                elif letter in self.answer and letter_counter[letter] > 0:
                     square.append("YELLOW")
+                    letter_counter[letter] -= 1
                 else:
                     square.append("GREY")
             squares.append(square)
