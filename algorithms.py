@@ -58,6 +58,12 @@ class BaseAlgorithm:
                 self.good_letters.append(p_guess[idx])
             if square=="GREEN":
                 self.right_position[idx] = p_guess[idx]
+                
+        btemp = set()       
+        for i in self.bad_letters:
+            if i not in self.good_letters:
+                btemp.add(i)
+        self.bad_letters = list(btemp)
 
     def update_remaining_words(self):
         self.remaining_word_list = [word for word in self.word_list if \
