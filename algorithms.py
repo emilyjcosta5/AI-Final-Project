@@ -58,8 +58,8 @@ class BaseAlgorithm:
                 self.good_letters.append(p_guess[idx])
             if square=="GREEN":
                 self.right_position[idx] = p_guess[idx]
-                
-        btemp = set()       
+
+        btemp = set()
         for i in self.bad_letters:
             if i not in self.good_letters:
                 btemp.add(i)
@@ -245,6 +245,12 @@ class GeneticAlgortihm(BaseAlgorithm):
 
         self.guesses[p_guess] = ind_fitness
         self.guesses = dict(sorted(self.guesses.items(), key=lambda item: item[1], reverse=True))
+
+        btemp = set()
+        for i in self.bad_letters:
+            if i not in self.good_letters:
+                btemp.add(i)
+        self.bad_letters = list(btemp)
 
     def make_first_guess(self) -> str:
         guess = random.choice(self.word_list)
