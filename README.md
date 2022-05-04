@@ -24,6 +24,7 @@ The provided code is written in Python 3.9. Following libraries are required for
 - requests
 - pandas
 - string
+- IPython
 
 
 ## Setup
