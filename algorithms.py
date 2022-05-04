@@ -436,7 +436,7 @@ class QLearn(BaseAlgorithm):
                 print(f"Percent Complete: {i / 2000 * 100}")
                 #print('Q-vals: ', self.policy_or_utilities.items
 
-        print('Tarining complete!\n')
+        print('Training complete!\n')
         self.policy_or_utilities = pd.DataFrame(data=self.policy_or_utilities, index=[0])
         self.policy_or_utilities.to_csv('q_policy.csv')
 
