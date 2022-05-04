@@ -81,18 +81,7 @@ Use the following commands to play the game:
         
   Below is a sample run for algorithms.py:
   
-  Select an Algorithm:          
-  1.Human Algorithm          
-  2.Aggregated Frequency          
-  3.Entropy Maximization          
-  4.Genetic Algorithm          
-  5.Q-Learning
-  2
-  rungs: GREY GREEN GREEN GREY GREY
-  cundy: YELLOW GREEN GREEN YELLOW GREY
-  dunce: GREEN GREEN GREEN GREEN GREEN
-  You won! Play another game? (Y/N) N
-  OK. Bye-bye!
+ ![img2](https://github.com/emilyjcosta5/AI-Final-Project/blob/main/Images/algo_run.png?raw=true)
 
 
 - To evaluate the performance of different algorithms,
