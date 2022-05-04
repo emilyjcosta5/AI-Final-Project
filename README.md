@@ -95,12 +95,9 @@ Use the following commands to play the game:
 
 
 - To evaluate the performance of different algorithms,
-       $ python evaluation.py
   
+        $ python evaluation.py
   
   All the outputs are generated inside the output folder.
 
 
-
-
--   
