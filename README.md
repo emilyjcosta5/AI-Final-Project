@@ -72,6 +72,7 @@ Use the following commands to play the game:
         
   Below is a sample run:
   
+  ![image](https://github.com/emilyjcosta5/AI-Final-Project/blob/main/Images/game_example.png?raw=true)
   
 
 - To play Wordle using an AI player,
